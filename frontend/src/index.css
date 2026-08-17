@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  /* MadamSaab brand palette, sampled from the reference template */
+  --color-brand-pink: #ec2f77;
+  --color-brand-pink-dark: #d61f66;
+  --color-brand-pink-light: #fce9f0;
+  --color-brand-pink-bg: #fdf3f7;
+  --color-brand-blue: #1a2b6b;
+  --color-brand-navy: #16204a;
+  --color-brand-white: #ffffff;
+  --color-brand-border: #f4d7e3;
+
+  --font-sans: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+  --font-logo: 'Baloo 2', 'Poppins', system-ui, sans-serif;
+
+  --radius-card: 20px;
+  --radius-pill: 999px;
+
+  --shadow-card: 0 10px 30px -12px rgba(26, 27, 71, 0.12);
+  --shadow-card-hover: 0 16px 40px -12px rgba(236, 47, 119, 0.22);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-white text-brand-navy antialiased;
+    font-family: var(--font-sans);
+  }
+}
+
+@layer components {
+  .input {
+    @apply mt-1 w-full rounded-lg border border-brand-border bg-white px-3 py-2 text-sm text-brand-navy outline-none transition focus:border-brand-pink focus:ring-1 focus:ring-brand-pink;
+  }
+
+  .err {
+    @apply mt-1 text-xs font-medium text-red-500;
+  }
+}
