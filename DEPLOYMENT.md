@@ -16,7 +16,10 @@ cluster.
 ## 2. Backend — Render Web Service
 
 - **Root directory:** `backend`
-- **Build command:** `npm install && npm run build`
+- **Build command:** `npm install --include=dev && npm run build`
+  (`--include=dev` is required — with `NODE_ENV=production` set, plain
+  `npm install` skips devDependencies, which breaks `nest build` since
+  `@nestjs/cli` lives there.)
 - **Start command:** `npm run start:prod`
 - **Environment variables:**
 
@@ -42,7 +45,8 @@ cluster.
 ## 3. Frontend — Render Static Site
 
 - **Root directory:** `frontend`
-- **Build command:** `npm install && npm run build`
+- **Build command:** `npm install --include=dev && npm run build`
+  (same devDependencies reasoning — `tsc` and `vite` are dev deps)
 - **Publish directory:** `dist`
 - **Environment variables:**
 
