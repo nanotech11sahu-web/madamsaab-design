@@ -15,6 +15,8 @@ import { ContactModule } from './contact/contact.module';
 import { StaffModule } from './staff/staff.module';
 import { AdminModule } from './admin/admin.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { MediaModule } from './media/media.module';
+import { CmsModule } from './cms/cms.module';
 
 @Module({
   imports: [
@@ -37,6 +39,8 @@ import { ReviewsModule } from './reviews/reviews.module';
     StaffModule,
     AdminModule,
     ReviewsModule,
+    MediaModule,
+    CmsModule,
   ],
   controllers: [AppController],
   providers: [

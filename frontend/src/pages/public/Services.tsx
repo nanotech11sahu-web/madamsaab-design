@@ -4,6 +4,7 @@ import { PageBanner } from '@/components/common/PageBanner';
 import { Reveal } from '@/components/common/Reveal';
 import { TrustFeatures } from '@/components/home/TrustFeatures';
 import { ContactCTA } from '@/components/home/ContactCTA';
+import { SEO } from '@/components/common/SEO';
 
 export function Services() {
   const { data: services, isLoading } = useServices();
@@ -12,6 +13,10 @@ export function Services() {
 
   return (
     <div>
+      <SEO
+        title="Our Services"
+        description="Browse haircuts, facials, waxing, hair spa, bridal makeup, nail extensions and more — with live pricing. Select and book instantly on WhatsApp."
+      />
       <PageBanner
         eyebrow="Our Services"
         title="Every Service, At Your Doorstep"

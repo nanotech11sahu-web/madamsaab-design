@@ -171,6 +171,43 @@ export interface Review {
   createdAt: string;
 }
 
+export interface HeroContent {
+  _id: string;
+  heading: string;
+  subheading: string;
+  image: string;
+  ctaText: string;
+  ctaLink: string;
+  status: 'ACTIVE' | 'INACTIVE';
+}
+
+export interface Testimonial {
+  _id: string;
+  name: string;
+  image?: string;
+  rating: number;
+  text: string;
+  status: 'ACTIVE' | 'INACTIVE';
+  sortOrder: number;
+}
+
+export interface Faq {
+  _id: string;
+  question: string;
+  answer: string;
+  category: string;
+  sortOrder: number;
+  status: 'ACTIVE' | 'INACTIVE';
+}
+
+export interface TrustFeature {
+  _id: string;
+  icon: string;
+  label: string;
+  sortOrder: number;
+  status: 'ACTIVE' | 'INACTIVE';
+}
+
 export interface DashboardStats {
   totalBookings: number;
   todaysBookings: number;

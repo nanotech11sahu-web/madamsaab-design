@@ -8,11 +8,17 @@ import { Testimonials } from '@/components/home/Testimonials';
 import { GallerySection } from '@/components/home/GallerySection';
 import { IndulgeSection } from '@/components/home/IndulgeSection';
 import { FullBleedImage } from '@/components/home/FullBleedImage';
+import { FAQSection } from '@/components/home/FAQSection';
 import { Reveal } from '@/components/common/Reveal';
+import { SEO } from '@/components/common/SEO';
 
 export function Home() {
   return (
     <div>
+      <SEO
+        title="Women's Salon at Your Doorstep"
+        description="Book premium women's salon services at home or in-salon. Haircuts, facials, waxing, bridal makeup and more. Book instantly on WhatsApp."
+      />
       <div className="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
         <Hero />
       </div>
@@ -48,6 +54,10 @@ export function Home() {
 
         <div className="mt-20">
           <Testimonials />
+        </div>
+
+        <div className="mt-20">
+          <FAQSection />
         </div>
 
         <Reveal className="mt-20">

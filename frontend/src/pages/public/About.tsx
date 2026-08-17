@@ -1,6 +1,7 @@
 import { ShieldCheck, Target, Eye, Sparkles, Users, Clock } from 'lucide-react';
 import { Reveal } from '@/components/common/Reveal';
 import { ImagePlaceholder } from '@/components/ui/ImagePlaceholder';
+import { SEO } from '@/components/common/SEO';
 
 const FEATURES = [
   { icon: ShieldCheck, title: 'Hygiene First', text: 'Sanitized tools and single-use consumables for every appointment.' },
@@ -25,6 +26,10 @@ const TEAM = [
 export function About() {
   return (
     <div>
+      <SEO
+        title="About Us"
+        description="MadamSaab connects women with certified beauty professionals for premium salon services at home. Learn about our mission, hygiene standards, and team."
+      />
       <section className="bg-brand-pink-bg">
         <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-2 lg:items-center lg:px-8 lg:py-20">
           <Reveal direction="right">

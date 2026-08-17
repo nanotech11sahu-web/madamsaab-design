@@ -28,6 +28,10 @@ import { AdminBookings } from '@/pages/admin/AdminBookings';
 import { AdminStaff } from '@/pages/admin/AdminStaff';
 import { AdminSettings } from '@/pages/admin/AdminSettings';
 import { AdminContact } from '@/pages/admin/AdminContact';
+import { AdminHero } from '@/pages/admin/AdminHero';
+import { AdminTestimonials } from '@/pages/admin/AdminTestimonials';
+import { AdminFaq } from '@/pages/admin/AdminFaq';
+import { AdminTrustFeatures } from '@/pages/admin/AdminTrustFeatures';
 
 function App() {
   return (
@@ -63,6 +67,10 @@ function App() {
           <Route path="/admin/packages" element={<AdminPackages />} />
           <Route path="/admin/bookings" element={<AdminBookings />} />
           <Route path="/admin/staff" element={<AdminStaff />} />
+          <Route path="/admin/hero" element={<AdminHero />} />
+          <Route path="/admin/testimonials" element={<AdminTestimonials />} />
+          <Route path="/admin/faq" element={<AdminFaq />} />
+          <Route path="/admin/trust-features" element={<AdminTrustFeatures />} />
           <Route path="/admin/contact" element={<AdminContact />} />
           <Route path="/admin/settings" element={<AdminSettings />} />
         </Route>

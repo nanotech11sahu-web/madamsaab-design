@@ -11,6 +11,10 @@ import {
   LogOut,
   Menu,
   X,
+  Image as ImageIcon,
+  Quote,
+  HelpCircle,
+  BadgeCheck,
 } from 'lucide-react';
 import { Logo } from '@/components/common/Logo';
 import { useAuthStore } from '@/store/authStore';
@@ -23,6 +27,10 @@ const NAV = [
   { to: '/admin/packages', label: 'Packages', icon: PackageIcon },
   { to: '/admin/bookings', label: 'Bookings', icon: CalendarCheck },
   { to: '/admin/staff', label: 'Staff', icon: Users },
+  { to: '/admin/hero', label: 'Homepage Hero', icon: ImageIcon },
+  { to: '/admin/testimonials', label: 'Testimonials', icon: Quote },
+  { to: '/admin/faq', label: 'FAQs', icon: HelpCircle },
+  { to: '/admin/trust-features', label: 'Trust Features', icon: BadgeCheck },
   { to: '/admin/contact', label: 'Contact Submissions', icon: Mail },
   { to: '/admin/settings', label: 'Business Settings', icon: SettingsIcon },
 ];

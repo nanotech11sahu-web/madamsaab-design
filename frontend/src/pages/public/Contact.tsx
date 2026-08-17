@@ -6,6 +6,7 @@ import { contactApi } from '@/services/api';
 import { useSettings } from '@/hooks/useServices';
 import { contactFormSchema, type ContactFormValues } from '@/schemas/contact.schema';
 import { PageBanner } from '@/components/common/PageBanner';
+import { SEO } from '@/components/common/SEO';
 
 export function Contact() {
   const { data: settings } = useSettings();
@@ -23,6 +24,10 @@ export function Contact() {
 
   return (
     <div>
+      <SEO
+        title="Contact Us"
+        description="Get in touch with MadamSaab for bookings, custom packages, or questions. Reach us on WhatsApp, phone, or email."
+      />
       <PageBanner
         eyebrow="Get in Touch"
         title="Contact Us"

@@ -8,6 +8,10 @@ import { Package, PackageDocument } from './packages/schemas/package.schema';
 import { Settings, SettingsDocument } from './settings/schemas/settings.schema';
 import { User, UserDocument } from './users/schemas/user.schema';
 import { slugify } from './common/utils/slugify';
+import { HeroContent, HeroContentDocument } from './cms/hero/schemas/hero-content.schema';
+import { Testimonial, TestimonialDocument } from './cms/testimonials/schemas/testimonial.schema';
+import { Faq, FaqDocument } from './cms/faq/schemas/faq.schema';
+import { TrustFeature, TrustFeatureDocument } from './cms/trust-features/schemas/trust-feature.schema';
 
 const SERVICES = [
   {
@@ -77,6 +81,16 @@ async function seed() {
     getModelToken(Settings.name),
   );
   const userModel = app.get<Model<UserDocument>>(getModelToken(User.name));
+  const heroModel = app.get<Model<HeroContentDocument>>(
+    getModelToken(HeroContent.name),
+  );
+  const testimonialModel = app.get<Model<TestimonialDocument>>(
+    getModelToken(Testimonial.name),
+  );
+  const faqModel = app.get<Model<FaqDocument>>(getModelToken(Faq.name));
+  const trustFeatureModel = app.get<Model<TrustFeatureDocument>>(
+    getModelToken(TrustFeature.name),
+  );
 
   console.log('Seeding services...');
   const serviceDocs: Record<string, ServiceDocument> = {};
@@ -158,6 +172,134 @@ async function seed() {
     { upsert: true, new: true, setDefaultsOnInsert: true },
   );
   console.log('  settings upserted');
+
+  console.log('Seeding hero content...');
+  await heroModel.findOneAndUpdate(
+    {},
+    {
+      heading: "Women's Salon, Delivered Home.",
+      subheading:
+        'Certified women professionals, premium products, and a hygienic experience — booked in seconds.',
+      ctaText: 'BOOK NOW',
+      ctaLink: '/book',
+      image: '',
+    },
+    { upsert: true, new: true, setDefaultsOnInsert: true },
+  );
+  console.log('  hero content upserted');
+
+  console.log('Seeding testimonials...');
+  const testimonials = [
+    {
+      name: 'Priya S.',
+      rating: 5,
+      text: 'The at-home facial was so relaxing and the professional was right on time. Booking on WhatsApp made everything so easy!',
+      sortOrder: 1,
+    },
+    {
+      name: 'Ananya R.',
+      rating: 5,
+      text: 'Loved my bridal makeup trial. Premium products, super hygienic, and the artist was incredibly talented.',
+      sortOrder: 2,
+    },
+    {
+      name: 'Kavya M.',
+      rating: 4,
+      text: 'Quick and convenient haircut at home. Will definitely book the Glow Package next time.',
+      sortOrder: 3,
+    },
+    {
+      name: 'Riya T.',
+      rating: 5,
+      text: 'Eyebrow threading and cleanup were done so neatly. Feels like a proper salon experience at home.',
+      sortOrder: 4,
+    },
+  ];
+  for (const t of testimonials) {
+    await testimonialModel.findOneAndUpdate(
+      { name: t.name },
+      t,
+      { upsert: true, new: true, setDefaultsOnInsert: true },
+    );
+    console.log(`  upserted testimonial: ${t.name}`);
+  }
+
+  console.log('Seeding FAQs...');
+  const faqs = [
+    {
+      question: 'How do I book an appointment?',
+      answer:
+        'Simply select the services or packages you want, choose a date and time, and confirm your booking. You will be redirected to WhatsApp to complete the confirmation with our team.',
+      category: 'Booking',
+      sortOrder: 1,
+    },
+    {
+      question: 'How do I pay for my booking?',
+      answer:
+        'Payments are confirmed over WhatsApp after your booking request is submitted. We accept UPI, cards, and cash on service depending on availability.',
+      category: 'Payments',
+      sortOrder: 2,
+    },
+    {
+      question: 'Can I cancel or reschedule my appointment?',
+      answer:
+        'Yes, you can cancel or reschedule by messaging us on WhatsApp at least a few hours before your scheduled appointment time.',
+      category: 'Cancellation',
+      sortOrder: 3,
+    },
+    {
+      question: 'Do you provide services at home?',
+      answer:
+        'Yes, most of our services are available at your home within our serviceable areas. A small home service fee applies and is shown at checkout.',
+      category: 'Home Service',
+      sortOrder: 4,
+    },
+    {
+      question: 'What safety and hygiene practices do you follow?',
+      answer:
+        'All our professionals use sanitized tools and premium, hygienic products. Fresh disposable essentials are used wherever applicable for every appointment.',
+      category: 'Hygiene',
+      sortOrder: 5,
+    },
+    {
+      question: 'How is pricing determined for services and packages?',
+      answer:
+        'Each service is individually priced and shown upfront. Packages bundle multiple services together at a discounted combined price compared to booking them separately.',
+      category: 'Pricing',
+      sortOrder: 6,
+    },
+    {
+      question: 'Are your beauty professionals verified?',
+      answer:
+        'Yes, every professional on our platform is background-verified, trained, and experienced in delivering a premium salon experience.',
+      category: 'General',
+      sortOrder: 7,
+    },
+  ];
+  for (const f of faqs) {
+    await faqModel.findOneAndUpdate(
+      { question: f.question },
+      f,
+      { upsert: true, new: true, setDefaultsOnInsert: true },
+    );
+    console.log(`  upserted FAQ: ${f.question}`);
+  }
+
+  console.log('Seeding trust features...');
+  const trustFeatures = [
+    { icon: 'ShieldCheck', label: '100% Hygienic', sortOrder: 1 },
+    { icon: 'BadgeCheck', label: 'Verified Professionals', sortOrder: 2 },
+    { icon: 'Sparkles', label: 'Premium Products', sortOrder: 3 },
+    { icon: 'Clock', label: 'On-time Service', sortOrder: 4 },
+  ];
+  for (const tf of trustFeatures) {
+    await trustFeatureModel.findOneAndUpdate(
+      { label: tf.label },
+      tf,
+      { upsert: true, new: true, setDefaultsOnInsert: true },
+    );
+    console.log(`  upserted trust feature: ${tf.label}`);
+  }
 
   console.log('Seeding admin user...');
   const adminPasswordHash = await bcrypt.hash('Admin@123', 10);

@@ -4,12 +4,17 @@ import { PageBanner } from '@/components/common/PageBanner';
 import { Reveal } from '@/components/common/Reveal';
 import { TrustFeatures } from '@/components/home/TrustFeatures';
 import { ContactCTA } from '@/components/home/ContactCTA';
+import { SEO } from '@/components/common/SEO';
 
 export function Packages() {
   const { data: packages, isLoading } = usePackages();
 
   return (
     <div>
+      <SEO
+        title="Combo Packages"
+        description="Save with bundled salon service packages — facial, cleanup, hair spa, bridal-ready and more. Book instantly on WhatsApp."
+      />
       <PageBanner
         eyebrow="Our Packages"
         title="Combo Packages, Special Prices"

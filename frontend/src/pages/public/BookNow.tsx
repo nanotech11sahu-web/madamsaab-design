@@ -3,6 +3,7 @@ import { useServices, usePackages } from '@/hooks/useServices';
 import { ServicePriceCard } from '@/components/services/ServicePriceCard';
 import { PackageCard } from '@/components/services/PackageCard';
 import { PageBanner } from '@/components/common/PageBanner';
+import { SEO } from '@/components/common/SEO';
 import { cn } from '@/lib/cn';
 
 type Tab = 'SERVICES' | 'PACKAGES';
@@ -16,6 +17,10 @@ export function BookNow() {
 
   return (
     <div>
+      <SEO
+        title="Book Now"
+        description="Choose your services and packages, then confirm your booking on WhatsApp in seconds."
+      />
       <PageBanner
         eyebrow="Book Now"
         title="Choose Your Services & Packages"

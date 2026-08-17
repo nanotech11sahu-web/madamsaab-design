@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { useMutation } from '@tanstack/react-query';
 import { customerAuthApi } from '@/services/customerApi';
 import { useAuthStore } from '@/store/authStore';
+import { SEO } from '@/components/common/SEO';
 
 const schema = z.object({
   name: z.string().min(2, 'Enter your full name'),
@@ -34,6 +35,7 @@ export function Register() {
 
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-sm flex-col justify-center px-4 py-16 sm:px-6">
+      <SEO title="Create Account" noindex />
       <h1 className="text-2xl font-extrabold text-brand-navy">Create Account</h1>
       <p className="mt-1 text-sm text-brand-navy/60">Book faster and track your appointments.</p>
 

@@ -9,6 +9,7 @@ import { useSettings } from '@/hooks/useServices';
 import { bookingsApi } from '@/services/api';
 import { bookingFormSchema, TIME_SLOTS, type BookingFormValues } from '@/schemas/booking.schema';
 import type { CreateBookingResponse } from '@/types';
+import { SEO } from '@/components/common/SEO';
 
 export function Booking() {
   const navigate = useNavigate();
@@ -111,6 +112,7 @@ export function Booking() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+      <SEO title="Complete Your Booking" noindex />
       <h1 className="text-2xl font-extrabold text-brand-navy sm:text-3xl">Complete Your Booking</h1>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_360px]">

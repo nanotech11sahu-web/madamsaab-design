@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { useMutation } from '@tanstack/react-query';
 import { customerAuthApi } from '@/services/customerApi';
 import { useAuthStore } from '@/store/authStore';
+import { SEO } from '@/components/common/SEO';
 
 const schema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -32,6 +33,7 @@ export function Login() {
 
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-sm flex-col justify-center px-4 py-16 sm:px-6">
+      <SEO title="Log In" noindex />
       <h1 className="text-2xl font-extrabold text-brand-navy">Welcome Back</h1>
       <p className="mt-1 text-sm text-brand-navy/60">Log in to manage your bookings.</p>
 
