@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+export const API_BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
+
 export const api = axios.create({
-  baseURL: '/api/v1',
+  baseURL: API_BASE_URL,
 });
 
 api.interceptors.request.use((config) => {
@@ -53,7 +55,7 @@ async function refreshAccessToken(): Promise<string | null> {
 
   if (!refreshPromise) {
     refreshPromise = axios
-      .post('/api/v1/auth/refresh', { refreshToken })
+      .post(`${API_BASE_URL}/auth/refresh`, { refreshToken })
       .then((res) => {
         const { accessToken, refreshToken: newRefreshToken } = res.data;
         persistNewTokens(accessToken, newRefreshToken);
