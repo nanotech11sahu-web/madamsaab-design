@@ -40,8 +40,8 @@ export class User {
   @Prop({ required: true, trim: true })
   phone: string;
 
-  @Prop({ type: String, default: null, unique: true, sparse: true, trim: true })
-  username: string | null;
+  @Prop({ type: String, unique: true, sparse: true, trim: true })
+  username?: string;
 
   @Prop({ required: true, select: false })
   password: string;

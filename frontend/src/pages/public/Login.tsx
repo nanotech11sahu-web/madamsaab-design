@@ -1,8 +1,9 @@
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useMutation } from '@tanstack/react-query';
+import { Home } from 'lucide-react';
 import { customerAuthApi } from '@/services/customerApi';
 import { useCustomerAuthStore } from '@/store/customerAuthStore';
 import { SEO } from '@/components/common/SEO';
@@ -15,6 +16,9 @@ type Values = z.infer<typeof schema>;
 
 export function Login() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirect = searchParams.get('redirect');
+  const forHome = redirect?.includes('mode=home');
   const setAuth = useCustomerAuthStore((s) => s.setAuth);
 
   const {
@@ -27,13 +31,19 @@ export function Login() {
     mutationFn: (v: Values) => customerAuthApi.login(v.email, v.password),
     onSuccess: (data) => {
       setAuth(data.user, data.accessToken, data.refreshToken);
-      navigate('/dashboard');
+      navigate(redirect || '/dashboard');
     },
   });
 
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-sm flex-col justify-center px-4 py-16 sm:px-6">
       <SEO title="Log In" noindex />
+      {forHome && (
+        <div className="mb-5 flex items-center gap-2 rounded-lg bg-brand-pink-light px-4 py-3 text-xs font-medium text-brand-pink">
+          <Home size={15} className="shrink-0" />
+          Log in or create an account to book a home service — we'll use your saved address.
+        </div>
+      )}
       <h1 className="text-2xl font-extrabold text-brand-navy">Welcome Back</h1>
       <p className="mt-1 text-sm text-brand-navy/60">Log in to manage your bookings.</p>
 
@@ -62,7 +72,10 @@ export function Login() {
 
       <p className="mt-6 text-center text-sm text-brand-navy/60">
         Don&apos;t have an account?{' '}
-        <Link to="/register" className="font-semibold text-brand-pink hover:underline">
+        <Link
+          to={redirect ? `/register?redirect=${encodeURIComponent(redirect)}` : '/register'}
+          className="font-semibold text-brand-pink hover:underline"
+        >
           Register
         </Link>
       </p>

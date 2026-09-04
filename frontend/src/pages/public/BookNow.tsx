@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Home, Store } from 'lucide-react';
+import { Home, Store, ArrowRight, Sparkles } from 'lucide-react';
 import { useServices, usePackages } from '@/hooks/useServices';
 import { ServicePriceCard } from '@/components/services/ServicePriceCard';
 import { PackageCard } from '@/components/services/PackageCard';
@@ -15,7 +15,7 @@ function ModeSelect({ onSelect }: { onSelect: (mode: ServiceMode) => void }) {
     <div>
       <SEO
         title="Book Now"
-        description="Choose home service or salon visit, then pick your services and packages."
+        description="Choose home service or a salon visit, then pick your services and packages."
       />
       <PageBanner
         eyebrow="Book Now"
@@ -28,28 +28,32 @@ function ModeSelect({ onSelect }: { onSelect: (mode: ServiceMode) => void }) {
           <button
             type="button"
             onClick={() => onSelect('HOME')}
-            className="flex flex-col items-center gap-3 rounded-card border border-brand-border bg-white p-8 text-center shadow-card transition hover:-translate-y-1 hover:border-brand-pink hover:shadow-card-hover"
+            className="group relative flex flex-col items-center gap-4 overflow-hidden rounded-card border border-brand-border bg-white p-8 text-center shadow-card transition hover:-translate-y-1 hover:border-brand-pink hover:shadow-card-hover"
           >
-            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-pink-light text-brand-pink">
-              <Home size={26} />
+            <span className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-brand-pink to-brand-pink-dark text-white shadow-lg shadow-brand-pink/30 transition-transform group-hover:scale-110">
+              <Home size={34} strokeWidth={2} />
             </span>
-            <span className="text-lg font-bold text-brand-navy">At Home</span>
-            <span className="text-sm text-brand-navy/60">
-              Our professional comes to your doorstep at a time that suits you.
-            </span>
+            <div>
+              <span className="text-xl font-extrabold text-brand-navy">At Home</span>
+              <p className="mt-1.5 text-sm text-brand-navy/60">
+                Our professional comes to your doorstep at a time that suits you.
+              </p>
+            </div>
           </button>
           <button
             type="button"
             onClick={() => onSelect('SALON')}
-            className="flex flex-col items-center gap-3 rounded-card border border-brand-border bg-white p-8 text-center shadow-card transition hover:-translate-y-1 hover:border-brand-pink hover:shadow-card-hover"
+            className="group relative flex flex-col items-center gap-4 overflow-hidden rounded-card border border-brand-border bg-white p-8 text-center shadow-card transition hover:-translate-y-1 hover:border-brand-pink hover:shadow-card-hover"
           >
-            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-pink-light text-brand-pink">
-              <Store size={26} />
+            <span className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-brand-blue to-brand-navy text-white shadow-lg shadow-brand-navy/30 transition-transform group-hover:scale-110">
+              <Store size={34} strokeWidth={2} />
             </span>
-            <span className="text-lg font-bold text-brand-navy">At Salon</span>
-            <span className="text-sm text-brand-navy/60">
-              Visit our salon and enjoy the full in-studio experience.
-            </span>
+            <div>
+              <span className="text-xl font-extrabold text-brand-navy">At Salon</span>
+              <p className="mt-1.5 text-sm text-brand-navy/60">
+                Visit our salon and enjoy the full in-studio experience.
+              </p>
+            </div>
           </button>
         </div>
       </div>
@@ -101,50 +105,70 @@ export function BookNow() {
       />
 
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="flex flex-col items-center gap-4">
-          <div className="flex w-fit rounded-pill border border-brand-border bg-white p-1 shadow-card">
+        <div className="flex flex-col gap-4 rounded-card border border-brand-border bg-white p-3 shadow-card sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex overflow-hidden rounded-pill bg-brand-pink-bg p-1">
             <button
               type="button"
               onClick={() => handleSwitchMode('HOME')}
               className={cn(
-                'flex items-center gap-1.5 rounded-pill px-4 py-1.5 text-xs font-semibold transition sm:text-sm',
-                serviceMode === 'HOME' ? 'bg-brand-pink text-white' : 'text-brand-navy/60',
+                'flex items-center gap-2 rounded-pill px-4 py-2 text-sm font-semibold transition',
+                serviceMode === 'HOME'
+                  ? 'bg-brand-pink text-white shadow-sm'
+                  : 'text-brand-navy/60 hover:text-brand-navy',
               )}
             >
-              <Home size={14} /> At Home
+              <span
+                className={cn(
+                  'flex h-6 w-6 items-center justify-center rounded-full',
+                  serviceMode === 'HOME' ? 'bg-white/20' : 'bg-white text-brand-pink',
+                )}
+              >
+                <Home size={13} />
+              </span>
+              At Home
             </button>
             <button
               type="button"
               onClick={() => handleSwitchMode('SALON')}
               className={cn(
-                'flex items-center gap-1.5 rounded-pill px-4 py-1.5 text-xs font-semibold transition sm:text-sm',
-                serviceMode === 'SALON' ? 'bg-brand-pink text-white' : 'text-brand-navy/60',
+                'flex items-center gap-2 rounded-pill px-4 py-2 text-sm font-semibold transition',
+                serviceMode === 'SALON'
+                  ? 'bg-brand-pink text-white shadow-sm'
+                  : 'text-brand-navy/60 hover:text-brand-navy',
               )}
             >
-              <Store size={14} /> At Salon
+              <span
+                className={cn(
+                  'flex h-6 w-6 items-center justify-center rounded-full',
+                  serviceMode === 'SALON' ? 'bg-white/20' : 'bg-white text-brand-pink',
+                )}
+              >
+                <Store size={13} />
+              </span>
+              At Salon
             </button>
           </div>
 
-          <div className="mx-auto flex w-fit rounded-pill border border-brand-border bg-white p-1 shadow-card">
+          <div className="flex overflow-hidden rounded-pill border border-brand-border p-1">
             <button
               type="button"
               onClick={() => setTab('SERVICES')}
               className={cn(
-                'rounded-pill px-6 py-2 text-sm font-semibold transition',
-                tab === 'SERVICES' ? 'bg-brand-pink text-white' : 'text-brand-navy/60',
+                'flex items-center gap-1.5 rounded-pill px-5 py-2 text-sm font-semibold transition',
+                tab === 'SERVICES' ? 'bg-brand-navy text-white' : 'text-brand-navy/60',
               )}
             >
-              Services
+              <Sparkles size={13} /> Services
             </button>
             <button
               type="button"
               onClick={() => setTab('PACKAGES')}
               className={cn(
-                'rounded-pill px-6 py-2 text-sm font-semibold transition',
-                tab === 'PACKAGES' ? 'bg-brand-pink text-white' : 'text-brand-navy/60',
+                'flex items-center gap-1.5 rounded-pill px-5 py-2 text-sm font-semibold transition',
+                tab === 'PACKAGES' ? 'bg-brand-navy text-white' : 'text-brand-navy/60',
               )}
             >
-              Packages
+              <ArrowRight size={13} /> Packages
             </button>
           </div>
         </div>

@@ -111,7 +111,7 @@ export class BookingsService {
       .replace(/{{totalAmount}}/g, String(params.totalAmount));
   }
 
-  async create(dto: CreateBookingDto, userId?: string) {
+  async create(dto: CreateBookingDto, userId: string) {
     const serviceIds = dto.serviceIds ?? [];
     const packageIds = dto.packageIds ?? [];
 
@@ -184,7 +184,7 @@ export class BookingsService {
       try {
         booking = await this.bookingModel.create({
           bookingNumber,
-          user: userId ?? null,
+          user: userId,
           customer: dto.customer,
           services: bookedServices,
           packages: bookedPackages,

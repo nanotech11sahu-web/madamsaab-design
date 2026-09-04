@@ -27,10 +27,10 @@ interface AuthenticatedRequest extends Request {
 export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() dto: CreateBookingDto, @Req() req: Request) {
-    const user = (req as Partial<AuthenticatedRequest>).user;
-    return this.bookingsService.create(dto, user?.userId);
+  create(@Body() dto: CreateBookingDto, @Req() req: AuthenticatedRequest) {
+    return this.bookingsService.create(dto, req.user.userId);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

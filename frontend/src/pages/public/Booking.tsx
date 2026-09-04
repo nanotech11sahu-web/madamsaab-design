@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { X, Home, Store, Tag, CheckCircle2 } from 'lucide-react';
+import { X, Home, Store, Tag, CheckCircle2, LocateFixed, Loader2 } from 'lucide-react';
 import { useBookingStore } from '@/store/bookingStore';
 import { useCustomerAuthStore } from '@/store/customerAuthStore';
 import { useSettings } from '@/hooks/useServices';
@@ -40,6 +40,8 @@ export function Booking() {
   const [paymentState, setPaymentState] = useState<'idle' | 'processing' | 'paid' | 'failed'>('idle');
   const [couponInput, setCouponInput] = useState('');
   const [couponMessage, setCouponMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const [locating, setLocating] = useState(false);
+  const [locationError, setLocationError] = useState('');
 
   const {
     register,
@@ -69,6 +71,56 @@ export function Booking() {
 
   const homeServiceFee = serviceMode === 'HOME' ? (settings?.homeServiceFee ?? 0) : 0;
   const total = Math.max(0, subtotal() - discountAmount + homeServiceFee);
+
+  const useCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationError('Location is not supported on this device/browser.');
+      return;
+    }
+    setLocationError('');
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`,
+            { headers: { Accept: 'application/json' } },
+          );
+          if (!res.ok) throw new Error('reverse geocode failed');
+          const data = await res.json();
+          const addr = data.address ?? {};
+
+          const line1 = [addr.house_number, addr.road || addr.pedestrian || addr.suburb]
+            .filter(Boolean)
+            .join(' ');
+          const line2 = addr.suburb && addr.suburb !== line1 ? addr.suburb : '';
+          const city = addr.city || addr.town || addr.village || addr.county || '';
+          const state = addr.state || '';
+          const pincode = addr.postcode || '';
+
+          if (line1) setValue('line1', line1);
+          if (line2) setValue('line2', line2);
+          if (city) setValue('city', city);
+          if (state) setValue('state', state);
+          if (pincode) setValue('pincode', pincode);
+
+          if (!line1 && !city) {
+            setLocationError('Could not detect a precise address — please fill it in manually.');
+          }
+        } catch {
+          setLocationError('Could not detect your address. Please fill it in manually.');
+        } finally {
+          setLocating(false);
+        }
+      },
+      () => {
+        setLocating(false);
+        setLocationError('Location permission denied — please fill in your address manually.');
+      },
+      { enableHighAccuracy: true, timeout: 10000 },
+    );
+  };
 
   const couponMutation = useMutation({
     mutationFn: () => couponsApi.apply(couponInput.trim(), subtotal()),
@@ -303,6 +355,18 @@ export function Booking() {
                   .
                 </p>
               )}
+
+              <button
+                type="button"
+                onClick={useCurrentLocation}
+                disabled={locating}
+                className="mb-4 flex items-center gap-1.5 rounded-pill border border-brand-pink px-4 py-2 text-xs font-semibold text-brand-pink transition hover:bg-brand-pink-light disabled:opacity-60"
+              >
+                {locating ? <Loader2 size={13} className="animate-spin" /> : <LocateFixed size={13} />}
+                {locating ? 'Detecting your location...' : 'Use Current Location'}
+              </button>
+              {locationError && <p className="err mb-3">{locationError}</p>}
+
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="sm:col-span-2">
                   <label className="text-xs font-semibold text-brand-navy/70">Address Line 1</label>

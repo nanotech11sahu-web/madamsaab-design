@@ -8,8 +8,8 @@ export function Footer() {
 
   return (
     <footer className="border-t border-brand-border/60 bg-brand-pink-bg">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-4 lg:px-8">
-        <div>
+      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-x-6 gap-y-8 px-4 py-10 sm:px-6 sm:py-14 lg:grid-cols-4 lg:gap-10 lg:px-8">
+        <div className="col-span-2 lg:col-span-1">
           <Logo />
           <p className="mt-4 max-w-xs text-sm text-brand-navy/70">
             Premium salon services for women, at your doorstep or in-salon.

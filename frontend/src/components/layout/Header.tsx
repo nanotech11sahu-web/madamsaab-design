@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, User } from 'lucide-react';
 import { Logo } from '@/components/common/Logo';
 import { BookingCTAButton } from '@/components/ui/BookingCTAButton';
+import { useCustomerAuthStore } from '@/store/customerAuthStore';
 
 const NAV_LINKS = [
   { label: 'Home', to: '/' },
@@ -16,6 +17,7 @@ const NAV_LINKS = [
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const customerUser = useCustomerAuthStore((s) => s.user);
 
   return (
     <header className="sticky top-0 z-40 border-b border-brand-border/60 bg-white/95 backdrop-blur">
@@ -40,7 +42,14 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="hidden lg:block">
+        <div className="hidden items-center gap-4 lg:flex">
+          <Link
+            to={customerUser ? '/dashboard' : '/login'}
+            className="flex items-center gap-1.5 text-sm font-medium text-brand-navy transition hover:text-brand-pink"
+          >
+            <User size={16} />
+            {customerUser ? customerUser.name.split(' ')[0] : 'Login'}
+          </Link>
           <BookingCTAButton />
         </div>
 
@@ -67,6 +76,14 @@ export function Header() {
                 {link.label}
               </NavLink>
             ))}
+            <Link
+              to={customerUser ? '/dashboard' : '/login'}
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-1.5 text-sm font-medium text-brand-navy"
+            >
+              <User size={16} />
+              {customerUser ? `Hi, ${customerUser.name.split(' ')[0]}` : 'Login / Register'}
+            </Link>
             <BookingCTAButton className="w-full justify-center" />
           </nav>
         </div>

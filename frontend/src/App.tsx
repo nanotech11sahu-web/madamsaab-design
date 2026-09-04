@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import { Layout } from '@/components/layout/Layout';
+import { ScrollToTop } from '@/components/common/ScrollToTop';
 import { Home } from '@/pages/public/Home';
 import { Services } from '@/pages/public/Services';
 import { Packages } from '@/pages/public/Packages';
@@ -26,30 +27,34 @@ import { AdminServices } from '@/pages/admin/AdminServices';
 import { AdminPackages } from '@/pages/admin/AdminPackages';
 import { AdminBookings } from '@/pages/admin/AdminBookings';
 import { AdminStaff } from '@/pages/admin/AdminStaff';
-import { AdminSettings } from '@/pages/admin/AdminSettings';
-import { AdminContact } from '@/pages/admin/AdminContact';
-import { AdminHero } from '@/pages/admin/AdminHero';
-import { AdminTestimonials } from '@/pages/admin/AdminTestimonials';
-import { AdminFaq } from '@/pages/admin/AdminFaq';
-import { AdminTrustFeatures } from '@/pages/admin/AdminTrustFeatures';
+// Hidden pending separate client sign-off/payment for the CMS add-on — re-enable by uncommenting.
+// import { AdminSettings } from '@/pages/admin/AdminSettings';
+// import { AdminContact } from '@/pages/admin/AdminContact';
+// import { AdminHero } from '@/pages/admin/AdminHero';
+// import { AdminTestimonials } from '@/pages/admin/AdminTestimonials';
+// import { AdminFaq } from '@/pages/admin/AdminFaq';
+// import { AdminTrustFeatures } from '@/pages/admin/AdminTrustFeatures';
 import { AdminCoupons } from '@/pages/admin/AdminCoupons';
 import { AdminCustomers } from '@/pages/admin/AdminCustomers';
 
 function App() {
   return (
-    <Routes>
+    <>
+      <ScrollToTop />
+      <Routes>
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="/services" element={<Services />} />
         <Route path="/packages" element={<Packages />} />
-        <Route path="/book" element={<BookNow />} />
-        <Route path="/booking" element={<Booking />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
         <Route element={<CustomerProtectedRoute />}>
+          <Route path="/book" element={<BookNow />} />
+          <Route path="/booking" element={<Booking />} />
+
           <Route element={<CustomerDashboardLayout />}>
             <Route path="/dashboard" element={<Profile />} />
             <Route path="/dashboard/addresses" element={<Addresses />} />
@@ -71,15 +76,17 @@ function App() {
           <Route path="/admin/coupons" element={<AdminCoupons />} />
           <Route path="/admin/customers" element={<AdminCustomers />} />
           <Route path="/admin/staff" element={<AdminStaff />} />
-          <Route path="/admin/hero" element={<AdminHero />} />
-          <Route path="/admin/testimonials" element={<AdminTestimonials />} />
-          <Route path="/admin/faq" element={<AdminFaq />} />
-          <Route path="/admin/trust-features" element={<AdminTrustFeatures />} />
-          <Route path="/admin/contact" element={<AdminContact />} />
-          <Route path="/admin/settings" element={<AdminSettings />} />
+          {/* Hidden pending separate client sign-off/payment for the CMS add-on — re-enable by uncommenting. */}
+          {/* <Route path="/admin/hero" element={<AdminHero />} /> */}
+          {/* <Route path="/admin/testimonials" element={<AdminTestimonials />} /> */}
+          {/* <Route path="/admin/faq" element={<AdminFaq />} /> */}
+          {/* <Route path="/admin/trust-features" element={<AdminTrustFeatures />} /> */}
+          {/* <Route path="/admin/contact" element={<AdminContact />} /> */}
+          {/* <Route path="/admin/settings" element={<AdminSettings />} /> */}
         </Route>
       </Route>
-    </Routes>
+      </Routes>
+    </>
   );
 }
 
