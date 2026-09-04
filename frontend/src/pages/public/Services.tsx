@@ -5,11 +5,23 @@ import { Reveal } from '@/components/common/Reveal';
 import { TrustFeatures } from '@/components/home/TrustFeatures';
 import { ContactCTA } from '@/components/home/ContactCTA';
 import { SEO } from '@/components/common/SEO';
+import { ModeSelectGate } from '@/components/booking/ModeSelectGate';
+import { ModeTogglePill } from '@/components/booking/ModeTogglePill';
+import { useBookingStore } from '@/store/bookingStore';
 
 export function Services() {
   const { data: services, isLoading } = useServices();
+  const serviceMode = useBookingStore((s) => s.serviceMode);
+  const setServiceMode = useBookingStore((s) => s.setServiceMode);
 
-  const categories = Array.from(new Set((services ?? []).map((s) => s.category)));
+  if (!serviceMode) {
+    return <ModeSelectGate onSelect={setServiceMode} seoTitle="Our Services" />;
+  }
+
+  const availableServices = (services ?? []).filter((s) =>
+    serviceMode === 'HOME' ? s.homeServiceAvailable : s.salonServiceAvailable,
+  );
+  const categories = Array.from(new Set(availableServices.map((s) => s.category)));
 
   return (
     <div>
@@ -25,6 +37,8 @@ export function Services() {
       />
 
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <ModeTogglePill className="mb-8" />
+
         {isLoading && (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             {Array.from({ length: 8 }).map((_, i) => (
@@ -33,14 +47,20 @@ export function Services() {
           </div>
         )}
 
+        {!isLoading && categories.length === 0 && (
+          <p className="py-10 text-center text-sm text-brand-navy/60">
+            No services are currently available for {serviceMode === 'HOME' ? 'home service' : 'salon visits'}.
+          </p>
+        )}
+
         {categories.map((category) => (
           <div key={category} className="mt-2 mb-10 first:mt-0">
             <Reveal>
               <h2 className="mb-4 text-lg font-bold text-brand-navy">{category}</h2>
             </Reveal>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-              {services
-                ?.filter((s) => s.category === category)
+              {availableServices
+                .filter((s) => s.category === category)
                 .map((service) => <ServicePriceCard key={service._id} service={service} />)}
             </div>
           </div>

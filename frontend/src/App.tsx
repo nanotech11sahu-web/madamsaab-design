@@ -50,11 +50,10 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/book" element={<BookNow />} />
+        <Route path="/booking" element={<Booking />} />
 
         <Route element={<CustomerProtectedRoute />}>
-          <Route path="/book" element={<BookNow />} />
-          <Route path="/booking" element={<Booking />} />
-
           <Route element={<CustomerDashboardLayout />}>
             <Route path="/dashboard" element={<Profile />} />
             <Route path="/dashboard/addresses" element={<Addresses />} />

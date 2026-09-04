@@ -8,10 +8,18 @@ import { useBookingStore } from '@/store/bookingStore';
 import { useCustomerAuthStore } from '@/store/customerAuthStore';
 import { useSettings } from '@/hooks/useServices';
 import { bookingsApi, couponsApi, paymentsApi } from '@/services/api';
-import { profileApi } from '@/services/customerApi';
-import { bookingFormSchema, TIME_SLOTS, type BookingFormValues } from '@/schemas/booking.schema';
+import { profileApi, customerAuthApi } from '@/services/customerApi';
+import { buildBookingFormSchema, TIME_SLOTS, type BookingFormValues } from '@/schemas/booking.schema';
 import type { CreateBookingResponse } from '@/types';
 import { SEO } from '@/components/common/SEO';
+
+function extractErrorMessage(err: unknown): string {
+  if (err && typeof err === 'object' && 'response' in err) {
+    const response = (err as { response?: { data?: { message?: string } } }).response;
+    if (response?.data?.message) return response.data.message;
+  }
+  return 'Something went wrong. Please try again.';
+}
 
 export function Booking() {
   const navigate = useNavigate();
@@ -29,6 +37,7 @@ export function Booking() {
   } = useBookingStore();
   const { data: settings } = useSettings();
   const customerUser = useCustomerAuthStore((s) => s.user);
+  const setAuth = useCustomerAuthStore((s) => s.setAuth);
   const isLoggedIn = !!customerUser;
   const { data: profile } = useQuery({
     queryKey: ['profile'],
@@ -42,6 +51,7 @@ export function Booking() {
   const [couponMessage, setCouponMessage] = useState<{ ok: boolean; text: string } | null>(null);
   const [locating, setLocating] = useState(false);
   const [locationError, setLocationError] = useState('');
+  const [accountError, setAccountError] = useState('');
 
   const {
     register,
@@ -49,7 +59,7 @@ export function Booking() {
     setValue,
     formState: { errors },
   } = useForm<BookingFormValues>({
-    resolver: zodResolver(bookingFormSchema),
+    resolver: zodResolver(buildBookingFormSchema(!isLoggedIn)),
     defaultValues: { serviceType: serviceMode ?? 'HOME' },
   });
 
@@ -147,6 +157,8 @@ export function Booking() {
     },
   });
 
+  const registerMutation = useMutation({ mutationFn: customerAuthApi.register });
+
   const payMutation = useMutation({
     mutationFn: async () => {
       if (!result) return;
@@ -200,10 +212,27 @@ export function Booking() {
     },
   });
 
-  const onSubmit = (values: BookingFormValues) => {
+  const onSubmit = async (values: BookingFormValues) => {
     if (selectedServices.length === 0 && selectedPackages.length === 0) return;
+    setAccountError('');
+
+    if (!isLoggedIn) {
+      try {
+        const auth = await registerMutation.mutateAsync({
+          name: values.name,
+          email: values.email,
+          phone: values.phone,
+          password: values.password!,
+        });
+        setAuth(auth.user, auth.accessToken, auth.refreshToken);
+      } catch (err) {
+        setAccountError(extractErrorMessage(err));
+        return;
+      }
+    }
+
     mutation.mutate({
-      customer: { name: values.name, phone: values.phone, email: values.email || undefined },
+      customer: { name: values.name, phone: values.phone, email: values.email },
       serviceIds: selectedServices.map((s) => s._id),
       packageIds: selectedPackages.map((p) => p._id),
       serviceType: values.serviceType,
@@ -310,6 +339,16 @@ export function Booking() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <fieldset className="rounded-card border border-brand-border bg-white p-5">
             <legend className="px-1 text-sm font-bold text-brand-navy">Customer Details</legend>
+            {!isLoggedIn && (
+              <p className="mb-4 text-xs text-brand-navy/50">
+                New here? These details also create your MadamSaab account, so you can track this booking
+                afterward. Already have an account?{' '}
+                <Link to="/login" className="font-semibold text-brand-pink hover:underline">
+                  Log in
+                </Link>{' '}
+                first.
+              </p>
+            )}
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="text-xs font-semibold text-brand-navy/70">Full Name</label>
@@ -321,12 +360,38 @@ export function Booking() {
                 <input {...register('phone')} className="input" placeholder="10-digit mobile number" />
                 {errors.phone && <p className="err">{errors.phone.message}</p>}
               </div>
-              <div className="sm:col-span-2">
-                <label className="text-xs font-semibold text-brand-navy/70">Email (optional)</label>
+              <div className={isLoggedIn ? 'sm:col-span-2' : ''}>
+                <label className="text-xs font-semibold text-brand-navy/70">Email</label>
                 <input {...register('email')} className="input" placeholder="you@example.com" />
                 {errors.email && <p className="err">{errors.email.message}</p>}
               </div>
+              {!isLoggedIn && (
+                <div>
+                  <label className="text-xs font-semibold text-brand-navy/70">Create Password</label>
+                  <input
+                    type="password"
+                    {...register('password')}
+                    className="input"
+                    placeholder="At least 6 characters"
+                  />
+                  {errors.password && <p className="err">{errors.password.message}</p>}
+                </div>
+              )}
             </div>
+            {accountError && (
+              <p className="err mt-2">
+                {accountError}
+                {accountError.toLowerCase().includes('already') && (
+                  <>
+                    {' '}
+                    <Link to="/login" className="font-semibold underline">
+                      Log in instead
+                    </Link>
+                    .
+                  </>
+                )}
+              </p>
+            )}
           </fieldset>
 
           <fieldset className="rounded-card border border-brand-border bg-white p-5">
@@ -435,10 +500,16 @@ export function Booking() {
 
           <button
             type="submit"
-            disabled={mutation.isPending}
+            disabled={mutation.isPending || registerMutation.isPending}
             className="w-full rounded-pill bg-brand-pink px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-brand-pink-dark disabled:opacity-60"
           >
-            {mutation.isPending ? 'Booking...' : 'Continue to Confirm'}
+            {registerMutation.isPending
+              ? 'Creating your account...'
+              : mutation.isPending
+                ? 'Booking...'
+                : isLoggedIn
+                  ? 'Continue to Confirm'
+                  : 'Create Account & Book'}
           </button>
         </form>
 
