@@ -7,7 +7,6 @@ import { HowItWorks } from '@/components/home/HowItWorks';
 import { Testimonials } from '@/components/home/Testimonials';
 import { GallerySection } from '@/components/home/GallerySection';
 import { IndulgeSection } from '@/components/home/IndulgeSection';
-import { FullBleedImage } from '@/components/home/FullBleedImage';
 import { FAQSection } from '@/components/home/FAQSection';
 import { Reveal } from '@/components/common/Reveal';
 import { SEO } from '@/components/common/SEO';
@@ -43,10 +42,6 @@ export function Home() {
         <div className="mt-20">
           <HowItWorks />
         </div>
-      </div>
-
-      <div className="mt-20">
-        <FullBleedImage />
       </div>
 
       <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">

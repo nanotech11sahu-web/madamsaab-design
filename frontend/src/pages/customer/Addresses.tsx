@@ -4,6 +4,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Trash2, Star } from 'lucide-react';
 import { profileApi } from '@/services/customerApi';
 import { Modal } from '@/components/admin/Modal';
+import { useCurrentLocation } from '@/hooks/useCurrentLocation';
+import { UseCurrentLocationButton } from '@/components/booking/UseCurrentLocationButton';
 import type { UserAddress } from '@/types';
 
 type FormValues = Omit<UserAddress, 'isDefault'> & { isDefault: boolean };
@@ -22,7 +24,18 @@ export function Addresses() {
   const queryClient = useQueryClient();
   const { data: profile, isLoading } = useQuery({ queryKey: ['profile'], queryFn: profileApi.get });
   const [showForm, setShowForm] = useState(false);
-  const { register, handleSubmit, reset } = useForm<FormValues>({ defaultValues: EMPTY });
+  const { register, handleSubmit, reset, setValue } = useForm<FormValues>({ defaultValues: EMPTY });
+  const { locating, locationError, detect } = useCurrentLocation();
+
+  const handleUseCurrentLocation = () => {
+    detect((address) => {
+      if (address.line1) setValue('line1', address.line1);
+      if (address.line2) setValue('line2', address.line2);
+      if (address.city) setValue('city', address.city);
+      if (address.state) setValue('state', address.state);
+      if (address.pincode) setValue('pincode', address.pincode);
+    });
+  };
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['profile'] });
 
@@ -114,6 +127,10 @@ export function Addresses() {
               <label className="text-xs font-semibold text-brand-navy/70">Label</label>
               <input {...register('label', { required: true })} className="input" placeholder="Home, Office..." />
             </div>
+
+            <UseCurrentLocationButton locating={locating} onClick={handleUseCurrentLocation} />
+            {locationError && <p className="err">{locationError}</p>}
+
             <div>
               <label className="text-xs font-semibold text-brand-navy/70">Address Line 1</label>
               <input {...register('line1', { required: true })} className="input" />

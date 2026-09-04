@@ -4,9 +4,8 @@ import { useForm } from 'react-hook-form';
 import { Star } from 'lucide-react';
 import { myBookingsApi, myReviewsApi } from '@/services/customerApi';
 import { Modal } from '@/components/admin/Modal';
+import { bookingStatusLabel } from '@/utils/bookingStatus';
 import type { Booking } from '@/types';
-
-const CANCELLABLE = ['PENDING_WHATSAPP_CONFIRMATION', 'CONFIRMED', 'ASSIGNED'];
 
 function ReviewForm({ booking, onDone }: { booking: Booking; onDone: () => void }) {
   const queryClient = useQueryClient();
@@ -47,14 +46,8 @@ function ReviewForm({ booking, onDone }: { booking: Booking; onDone: () => void 
 }
 
 export function MyBookings() {
-  const queryClient = useQueryClient();
   const { data: bookings, isLoading } = useQuery({ queryKey: ['my-bookings'], queryFn: myBookingsApi.list });
   const [reviewFor, setReviewFor] = useState<Booking | null>(null);
-
-  const cancelMutation = useMutation({
-    mutationFn: myBookingsApi.cancel,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['my-bookings'] }),
-  });
 
   return (
     <div>
@@ -76,7 +69,7 @@ export function MyBookings() {
               <div className="text-right">
                 <p className="text-lg font-extrabold text-brand-pink">₹{b.totalAmount}</p>
                 <span className="mt-1 inline-block rounded-full bg-brand-pink-light px-2 py-0.5 text-xs font-medium text-brand-pink">
-                  {b.bookingStatus.replaceAll('_', ' ')}
+                  {bookingStatusLabel(b.bookingStatus)}
                 </span>
               </div>
             </div>
@@ -94,17 +87,8 @@ export function MyBookings() {
               ))}
             </div>
 
-            <div className="mt-4 flex gap-3 border-t border-brand-border pt-4">
-              {CANCELLABLE.includes(b.bookingStatus) && (
-                <button
-                  type="button"
-                  onClick={() => window.confirm('Cancel this booking?') && cancelMutation.mutate(b._id)}
-                  className="text-xs font-semibold text-red-600 hover:underline"
-                >
-                  Cancel Booking
-                </button>
-              )}
-              {b.bookingStatus === 'COMPLETED' && (
+            {b.bookingStatus === 'COMPLETED' && (
+              <div className="mt-4 flex gap-3 border-t border-brand-border pt-4">
                 <button
                   type="button"
                   onClick={() => setReviewFor(b)}
@@ -112,8 +96,8 @@ export function MyBookings() {
                 >
                   Leave a Review
                 </button>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         ))}
       </div>

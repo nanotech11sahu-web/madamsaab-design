@@ -5,13 +5,16 @@ import { Logo } from '@/components/common/Logo';
 import { BookingCTAButton } from '@/components/ui/BookingCTAButton';
 import { useCustomerAuthStore } from '@/store/customerAuthStore';
 
+// `anchor: true` items are same-page hash links, not distinct routes — they
+// never get NavLink's "active" highlight (which only compares pathnames, so
+// every #hash on "/" would otherwise light up together with Home).
 const NAV_LINKS = [
-  { label: 'Home', to: '/' },
+  { label: 'Home', to: '/', end: true },
   { label: 'Services', to: '/services' },
   { label: 'Packages', to: '/packages' },
   { label: 'About Us', to: '/about' },
-  { label: 'How It Works', to: '/#how-it-works' },
-  { label: 'Reviews', to: '/#reviews' },
+  { label: 'How It Works', to: '/#how-it-works', anchor: true },
+  { label: 'Reviews', to: '/#reviews', anchor: true },
   { label: 'Contact', to: '/contact' },
 ];
 
@@ -27,19 +30,30 @@ export function Header() {
         </Link>
 
         <nav className="hidden items-center gap-8 lg:flex">
-          {NAV_LINKS.map((link) => (
-            <NavLink
-              key={link.label}
-              to={link.to}
-              className={({ isActive }) =>
-                `text-sm font-medium transition hover:text-brand-pink ${
-                  isActive ? 'text-brand-pink' : 'text-brand-navy'
-                }`
-              }
-            >
-              {link.label}
-            </NavLink>
-          ))}
+          {NAV_LINKS.map((link) =>
+            link.anchor ? (
+              <Link
+                key={link.label}
+                to={link.to}
+                className="text-sm font-medium text-brand-navy transition hover:text-brand-pink"
+              >
+                {link.label}
+              </Link>
+            ) : (
+              <NavLink
+                key={link.label}
+                to={link.to}
+                end={link.end}
+                className={({ isActive }) =>
+                  `text-sm font-medium transition hover:text-brand-pink ${
+                    isActive ? 'text-brand-pink' : 'text-brand-navy'
+                  }`
+                }
+              >
+                {link.label}
+              </NavLink>
+            ),
+          )}
         </nav>
 
         <div className="hidden items-center gap-4 lg:flex">
@@ -66,16 +80,30 @@ export function Header() {
       {open && (
         <div className="border-t border-brand-border/60 bg-white px-4 py-4 lg:hidden">
           <nav className="flex flex-col gap-4">
-            {NAV_LINKS.map((link) => (
-              <NavLink
-                key={link.label}
-                to={link.to}
-                onClick={() => setOpen(false)}
-                className="text-sm font-medium text-brand-navy"
-              >
-                {link.label}
-              </NavLink>
-            ))}
+            {NAV_LINKS.map((link) =>
+              link.anchor ? (
+                <Link
+                  key={link.label}
+                  to={link.to}
+                  onClick={() => setOpen(false)}
+                  className="text-sm font-medium text-brand-navy"
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <NavLink
+                  key={link.label}
+                  to={link.to}
+                  end={link.end}
+                  onClick={() => setOpen(false)}
+                  className={({ isActive }) =>
+                    `text-sm font-medium ${isActive ? 'text-brand-pink' : 'text-brand-navy'}`
+                  }
+                >
+                  {link.label}
+                </NavLink>
+              ),
+            )}
             <Link
               to={customerUser ? '/dashboard' : '/login'}
               onClick={() => setOpen(false)}

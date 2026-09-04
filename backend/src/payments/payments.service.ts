@@ -9,11 +9,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as crypto from 'crypto';
 import Razorpay from 'razorpay';
-import {
-  Booking,
-  BookingDocument,
-  BookingStatus,
-} from '../bookings/schemas/booking.schema';
+import { Booking, BookingDocument } from '../bookings/schemas/booking.schema';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { VerifyPaymentDto } from './dto/verify-payment.dto';
 
@@ -62,6 +58,10 @@ export class PaymentsService {
    * callback (fast UI feedback) and the Razorpay webhook (authoritative source
    * of truth, since it doesn't depend on the customer's browser staying open).
    * Idempotent: a booking already marked PAID is left untouched.
+   *
+   * Deliberately does NOT touch bookingStatus — payment success and the salon
+   * actually approving/confirming the appointment are separate steps. A paid
+   * booking stays PENDING_WHATSAPP_CONFIRMATION until admin confirms it.
    */
   private async markPaid(bookingId: string, razorpayPaymentId: string) {
     const booking = await this.bookingModel.findById(bookingId);
@@ -70,9 +70,6 @@ export class PaymentsService {
 
     booking.paymentStatus = 'PAID';
     booking.razorpayPaymentId = razorpayPaymentId;
-    if (booking.bookingStatus === BookingStatus.PENDING_WHATSAPP_CONFIRMATION) {
-      booking.bookingStatus = BookingStatus.CONFIRMED;
-    }
     await booking.save();
     return booking;
   }
