@@ -301,24 +301,29 @@ async function seed() {
     console.log(`  upserted trust feature: ${tf.label}`);
   }
 
-  console.log('Seeding admin user...');
-  const adminPasswordHash = await bcrypt.hash('Admin@123', 10);
-  await userModel.findOneAndUpdate(
-    { email: 'admin@madamsaab.com' },
-    {
-      $set: {
-        name: 'Admin',
-        phone: '9999999999',
-        role: 'ADMIN',
-      },
-      $setOnInsert: {
-        email: 'admin@madamsaab.com',
-        password: adminPasswordHash,
-      },
-    },
-    { upsert: true, new: true, setDefaultsOnInsert: true },
-  );
-  console.log('Seeded admin user: admin@madamsaab.com / Admin@123');
+  console.log('Seeding superadmin user...');
+  const adminPasswordHash = await bcrypt.hash('jyotsna@2002', 10);
+  const existingAdmin = await userModel.findOne({
+    $or: [{ username: 'jyotsna04' }, { email: 'admin@madamsaab.com' }],
+  });
+  if (existingAdmin) {
+    existingAdmin.name = 'Jyotsna';
+    existingAdmin.phone = existingAdmin.phone || '9999999999';
+    existingAdmin.role = 'ADMIN';
+    existingAdmin.username = 'jyotsna04';
+    existingAdmin.password = adminPasswordHash;
+    await existingAdmin.save();
+  } else {
+    await userModel.create({
+      name: 'Jyotsna',
+      email: 'admin@madamsaab.com',
+      phone: '9999999999',
+      role: 'ADMIN',
+      username: 'jyotsna04',
+      password: adminPasswordHash,
+    });
+  }
+  console.log('Seeded superadmin user: jyotsna04 / jyotsna@2002');
 
   console.log('Seed complete.');
   await app.close();

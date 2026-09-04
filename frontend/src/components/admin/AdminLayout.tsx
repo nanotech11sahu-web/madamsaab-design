@@ -15,6 +15,8 @@ import {
   Quote,
   HelpCircle,
   BadgeCheck,
+  Tag,
+  UserCircle,
 } from 'lucide-react';
 import { Logo } from '@/components/common/Logo';
 import { useAuthStore } from '@/store/authStore';
@@ -26,6 +28,8 @@ const NAV = [
   { to: '/admin/services', label: 'Services', icon: Sparkles },
   { to: '/admin/packages', label: 'Packages', icon: PackageIcon },
   { to: '/admin/bookings', label: 'Bookings', icon: CalendarCheck },
+  { to: '/admin/coupons', label: 'Coupons', icon: Tag },
+  { to: '/admin/customers', label: 'Customers', icon: UserCircle },
   { to: '/admin/staff', label: 'Staff', icon: Users },
   { to: '/admin/hero', label: 'Homepage Hero', icon: ImageIcon },
   { to: '/admin/testimonials', label: 'Testimonials', icon: Quote },

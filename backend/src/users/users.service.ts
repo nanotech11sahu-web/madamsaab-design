@@ -20,6 +20,37 @@ export class UsersService {
     return query.exec();
   }
 
+  async findByIdentifier(identifier: string, withPassword = false) {
+    const query = this.userModel.findOne({
+      $or: [{ email: identifier.toLowerCase() }, { username: identifier }],
+    });
+    if (withPassword) query.select('+password');
+    return query.exec();
+  }
+
+  async findAllCustomers(params: { search?: string; page?: number; limit?: number }) {
+    const page = Math.max(1, params.page ?? 1);
+    const limit = Math.min(100, Math.max(1, params.limit ?? 20));
+    const filter: Record<string, unknown> = { role: 'CUSTOMER' };
+
+    if (params.search) {
+      const regex = new RegExp(params.search, 'i');
+      filter.$or = [{ name: regex }, { email: regex }, { phone: regex }];
+    }
+
+    const [items, total] = await Promise.all([
+      this.userModel
+        .find(filter)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .lean(),
+      this.userModel.countDocuments(filter),
+    ]);
+
+    return { items, total, page, limit, totalPages: Math.ceil(total / limit) };
+  }
+
   async findById(id: string) {
     return this.userModel.findById(id).exec();
   }

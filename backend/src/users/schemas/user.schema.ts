@@ -40,6 +40,9 @@ export class User {
   @Prop({ required: true, trim: true })
   phone: string;
 
+  @Prop({ type: String, default: null, unique: true, sparse: true, trim: true })
+  username: string | null;
+
   @Prop({ required: true, select: false })
   password: string;
 
@@ -48,6 +51,15 @@ export class User {
 
   @Prop({ type: [AddressSchema], default: [] })
   addresses: Address[];
+
+  @Prop({ type: String, default: null })
+  dateOfBirth: string | null;
+
+  @Prop({ type: String, enum: ['FEMALE', 'MALE', 'OTHER', null], default: null })
+  gender: string | null;
+
+  @Prop({ type: String, default: null })
+  profilePhoto: string | null;
 
   @Prop({ type: String, default: null, select: false })
   refreshTokenHash: string | null;

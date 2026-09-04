@@ -5,6 +5,7 @@ import { Service, ServiceSchema } from '../services/schemas/service.schema';
 import { Package, PackageSchema } from '../packages/schemas/package.schema';
 import { Settings, SettingsSchema } from '../settings/schemas/settings.schema';
 import { Staff, StaffSchema } from '../staff/schemas/staff.schema';
+import { CouponsModule } from '../coupons/coupons.module';
 import { BookingsController } from './bookings.controller';
 import { BookingsService } from './bookings.service';
 
@@ -17,9 +18,10 @@ import { BookingsService } from './bookings.service';
       { name: Settings.name, schema: SettingsSchema },
       { name: Staff.name, schema: StaffSchema },
     ]),
+    CouponsModule,
   ],
   controllers: [BookingsController],
   providers: [BookingsService],
-  exports: [BookingsService],
+  exports: [BookingsService, MongooseModule],
 })
 export class BookingsModule {}

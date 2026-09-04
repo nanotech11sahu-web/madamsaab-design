@@ -9,7 +9,7 @@ import { authApi } from '@/services/adminApi';
 import { useAuthStore } from '@/store/authStore';
 
 const loginSchema = z.object({
-  email: z.string().email('Enter a valid email'),
+  identifier: z.string().min(1, 'Enter your username or email'),
   password: z.string().min(1, 'Password is required'),
 });
 
@@ -27,7 +27,7 @@ export function AdminLogin() {
   } = useForm<LoginValues>({ resolver: zodResolver(loginSchema) });
 
   const mutation = useMutation({
-    mutationFn: (values: LoginValues) => authApi.login(values.email, values.password),
+    mutationFn: (values: LoginValues) => authApi.login(values.identifier, values.password),
     onSuccess: (data) => {
       if (data.user.role !== 'ADMIN') {
         setError('This account does not have admin access.');
@@ -58,9 +58,9 @@ export function AdminLogin() {
           className="mt-6 space-y-4"
         >
           <div>
-            <label className="text-xs font-semibold text-brand-navy/70">Email</label>
-            <input {...register('email')} className="input" placeholder="admin@madamsaab.com" />
-            {errors.email && <p className="err">{errors.email.message}</p>}
+            <label className="text-xs font-semibold text-brand-navy/70">Username</label>
+            <input {...register('identifier')} className="input" placeholder="Username or email" />
+            {errors.identifier && <p className="err">{errors.identifier.message}</p>}
           </div>
           <div>
             <label className="text-xs font-semibold text-brand-navy/70">Password</label>

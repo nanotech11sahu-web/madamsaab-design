@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useMutation } from '@tanstack/react-query';
 import { customerAuthApi } from '@/services/customerApi';
-import { useAuthStore } from '@/store/authStore';
+import { useCustomerAuthStore } from '@/store/customerAuthStore';
 import { SEO } from '@/components/common/SEO';
 
 const schema = z.object({
@@ -15,7 +15,7 @@ type Values = z.infer<typeof schema>;
 
 export function Login() {
   const navigate = useNavigate();
-  const setAuth = useAuthStore((s) => s.setAuth);
+  const setAuth = useCustomerAuthStore((s) => s.setAuth);
 
   const {
     register,

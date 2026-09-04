@@ -32,6 +32,8 @@ import { AdminHero } from '@/pages/admin/AdminHero';
 import { AdminTestimonials } from '@/pages/admin/AdminTestimonials';
 import { AdminFaq } from '@/pages/admin/AdminFaq';
 import { AdminTrustFeatures } from '@/pages/admin/AdminTrustFeatures';
+import { AdminCoupons } from '@/pages/admin/AdminCoupons';
+import { AdminCustomers } from '@/pages/admin/AdminCustomers';
 
 function App() {
   return (
@@ -66,6 +68,8 @@ function App() {
           <Route path="/admin/services" element={<AdminServices />} />
           <Route path="/admin/packages" element={<AdminPackages />} />
           <Route path="/admin/bookings" element={<AdminBookings />} />
+          <Route path="/admin/coupons" element={<AdminCoupons />} />
+          <Route path="/admin/customers" element={<AdminCustomers />} />
           <Route path="/admin/staff" element={<AdminStaff />} />
           <Route path="/admin/hero" element={<AdminHero />} />
           <Route path="/admin/testimonials" element={<AdminTestimonials />} />

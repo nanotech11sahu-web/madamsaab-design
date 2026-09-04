@@ -2,9 +2,17 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Service, Package } from '@/types';
 
+export type ServiceMode = 'HOME' | 'SALON';
+
 interface BookingState {
+  serviceMode: ServiceMode | null;
   selectedServices: Service[];
   selectedPackages: Package[];
+  couponCode: string | null;
+  discountAmount: number;
+  setServiceMode: (mode: ServiceMode) => void;
+  changeServiceMode: (mode: ServiceMode) => void;
+  setCoupon: (code: string | null, discountAmount: number) => void;
   toggleService: (service: Service) => void;
   togglePackage: (pkg: Package) => void;
   clear: () => void;
@@ -15,8 +23,21 @@ interface BookingState {
 export const useBookingStore = create<BookingState>()(
   persist(
     (set, get) => ({
+      serviceMode: null,
       selectedServices: [],
       selectedPackages: [],
+      couponCode: null,
+      discountAmount: 0,
+      setServiceMode: (mode) => set({ serviceMode: mode }),
+      changeServiceMode: (mode) =>
+        set({
+          serviceMode: mode,
+          selectedServices: [],
+          selectedPackages: [],
+          couponCode: null,
+          discountAmount: 0,
+        }),
+      setCoupon: (code, discountAmount) => set({ couponCode: code, discountAmount }),
       toggleService: (service) =>
         set((state) => {
           const exists = state.selectedServices.some((s) => s._id === service._id);
@@ -35,7 +56,8 @@ export const useBookingStore = create<BookingState>()(
               : [...state.selectedPackages, pkg],
           };
         }),
-      clear: () => set({ selectedServices: [], selectedPackages: [] }),
+      clear: () =>
+        set({ selectedServices: [], selectedPackages: [], couponCode: null, discountAmount: 0 }),
       subtotal: () => {
         const { selectedServices, selectedPackages } = get();
         return (

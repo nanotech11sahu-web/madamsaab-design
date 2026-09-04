@@ -93,8 +93,23 @@ export class Booking {
   @Prop({ required: true, min: 0, default: 0 })
   homeServiceFee: number;
 
+  @Prop({ type: String, default: null })
+  couponCode: string | null;
+
+  @Prop({ required: true, min: 0, default: 0 })
+  discountAmount: number;
+
   @Prop({ required: true, min: 0 })
   totalAmount: number;
+
+  @Prop({ enum: ['PENDING', 'PAID', 'FAILED'], default: 'PENDING' })
+  paymentStatus: string;
+
+  @Prop({ type: String, default: null })
+  razorpayOrderId: string | null;
+
+  @Prop({ type: String, default: null })
+  razorpayPaymentId: string | null;
 
   @Prop({
     enum: BookingStatus,

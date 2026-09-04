@@ -8,11 +8,13 @@ import type {
   Settings,
   ContactSubmission,
   DashboardStats,
+  Coupon,
+  Profile,
 } from '@/types';
 
 export const authApi = {
-  login: async (email: string, password: string): Promise<AuthResponse> =>
-    (await api.post('/auth/login', { email, password })).data,
+  login: async (identifier: string, password: string): Promise<AuthResponse> =>
+    (await api.post('/auth/login', { identifier, password })).data,
   logout: async (): Promise<void> => {
     await api.post('/auth/logout');
   },
@@ -67,6 +69,31 @@ export const adminStaffApi = {
 export const adminSettingsApi = {
   update: async (payload: Partial<Settings>): Promise<Settings> =>
     (await api.patch('/settings', payload)).data,
+};
+
+export const adminCouponsApi = {
+  list: async (): Promise<Coupon[]> => (await api.get('/coupons')).data,
+  create: async (payload: Partial<Coupon>): Promise<Coupon> =>
+    (await api.post('/coupons', payload)).data,
+  update: async (id: string, payload: Partial<Coupon>): Promise<Coupon> =>
+    (await api.patch(`/coupons/${id}`, payload)).data,
+  remove: async (id: string): Promise<void> => {
+    await api.delete(`/coupons/${id}`);
+  },
+};
+
+interface CustomerListResponse {
+  items: Profile[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export const adminCustomersApi = {
+  list: async (params?: { search?: string; page?: number }): Promise<CustomerListResponse> =>
+    (await api.get('/users', { params })).data,
+  get: async (id: string): Promise<Profile> => (await api.get(`/users/${id}`)).data,
 };
 
 export const adminContactApi = {

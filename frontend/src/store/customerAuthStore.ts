@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { AdminUser } from '@/types';
 
-interface AuthState {
+interface CustomerAuthState {
   user: AdminUser | null;
   accessToken: string | null;
   refreshToken: string | null;
@@ -10,21 +10,21 @@ interface AuthState {
   logout: () => void;
 }
 
-export const useAuthStore = create<AuthState>()(
+export const useCustomerAuthStore = create<CustomerAuthState>()(
   persist(
     (set) => ({
       user: null,
       accessToken: null,
       refreshToken: null,
       setAuth: (user, accessToken, refreshToken) => {
-        localStorage.setItem('admin_accessToken', accessToken);
+        localStorage.setItem('customer_accessToken', accessToken);
         set({ user, accessToken, refreshToken });
       },
       logout: () => {
-        localStorage.removeItem('admin_accessToken');
+        localStorage.removeItem('customer_accessToken');
         set({ user: null, accessToken: null, refreshToken: null });
       },
     }),
-    { name: 'madamsaab-admin-auth' },
+    { name: 'madamsaab-customer-auth' },
   ),
 );

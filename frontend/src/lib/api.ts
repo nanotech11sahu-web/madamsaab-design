@@ -6,8 +6,22 @@ export const api = axios.create({
   baseURL: API_BASE_URL,
 });
 
+type AuthNamespace = 'admin' | 'customer';
+
+function currentNamespace(): AuthNamespace {
+  return window.location.pathname.startsWith('/admin') ? 'admin' : 'customer';
+}
+
+function tokenKey(ns: AuthNamespace): string {
+  return ns === 'admin' ? 'admin_accessToken' : 'customer_accessToken';
+}
+
+function storeKey(ns: AuthNamespace): string {
+  return ns === 'admin' ? 'madamsaab-admin-auth' : 'madamsaab-customer-auth';
+}
+
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('accessToken');
+  const token = localStorage.getItem(tokenKey(currentNamespace()));
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -15,16 +29,17 @@ api.interceptors.request.use((config) => {
 });
 
 function clearAuthAndRedirect() {
-  localStorage.removeItem('accessToken');
-  localStorage.removeItem('madamsaab-admin-auth');
-  const loginPath = window.location.pathname.startsWith('/admin') ? '/admin/login' : '/login';
+  const ns = currentNamespace();
+  localStorage.removeItem(tokenKey(ns));
+  localStorage.removeItem(storeKey(ns));
+  const loginPath = ns === 'admin' ? '/admin/login' : '/login';
   if (window.location.pathname !== loginPath) {
     window.location.href = loginPath;
   }
 }
 
 function getRefreshToken(): string | null {
-  const raw = localStorage.getItem('madamsaab-admin-auth');
+  const raw = localStorage.getItem(storeKey(currentNamespace()));
   if (!raw) return null;
   try {
     return JSON.parse(raw)?.state?.refreshToken ?? null;
@@ -34,14 +49,15 @@ function getRefreshToken(): string | null {
 }
 
 function persistNewTokens(accessToken: string, refreshToken: string) {
-  localStorage.setItem('accessToken', accessToken);
-  const raw = localStorage.getItem('madamsaab-admin-auth');
+  const ns = currentNamespace();
+  localStorage.setItem(tokenKey(ns), accessToken);
+  const raw = localStorage.getItem(storeKey(ns));
   if (!raw) return;
   try {
     const parsed = JSON.parse(raw);
     parsed.state.accessToken = accessToken;
     parsed.state.refreshToken = refreshToken;
-    localStorage.setItem('madamsaab-admin-auth', JSON.stringify(parsed));
+    localStorage.setItem(storeKey(ns), JSON.stringify(parsed));
   } catch {
     // ignore malformed state
   }

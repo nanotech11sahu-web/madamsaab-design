@@ -72,6 +72,7 @@ export interface CreateBookingPayload {
   appointmentDate: string;
   timeSlot: string;
   notes?: string;
+  couponCode?: string;
 }
 
 export interface BookedItem {
@@ -92,8 +93,11 @@ export interface Booking {
   timeSlot: string;
   subtotal: number;
   homeServiceFee: number;
+  couponCode?: string | null;
+  discountAmount?: number;
   totalAmount: number;
   bookingStatus: string;
+  paymentStatus?: 'PENDING' | 'PAID' | 'FAILED';
   whatsappNumber: string;
   createdAt: string;
 }
@@ -108,7 +112,24 @@ export interface AdminUser {
   id: string;
   name: string;
   email: string;
+  username?: string | null;
   role: 'CUSTOMER' | 'ADMIN';
+}
+
+export interface Coupon {
+  _id: string;
+  code: string;
+  description?: string;
+  type: 'PERCENTAGE' | 'FLAT';
+  value: number;
+  isActive: boolean;
+  validFrom?: string | null;
+  validUntil?: string | null;
+  minOrderAmount: number;
+  maxDiscountAmount?: number | null;
+  usageLimit?: number | null;
+  usedCount: number;
+  createdAt?: string;
 }
 
 export interface AuthResponse {
@@ -159,6 +180,10 @@ export interface Profile {
   phone: string;
   role: 'CUSTOMER' | 'ADMIN';
   addresses: UserAddress[];
+  dateOfBirth?: string | null;
+  gender?: 'FEMALE' | 'MALE' | 'OTHER' | null;
+  profilePhoto?: string | null;
+  createdAt?: string;
 }
 
 export interface Review {

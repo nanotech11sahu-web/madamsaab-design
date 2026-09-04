@@ -19,6 +19,7 @@ import {
 } from '../settings/schemas/settings.schema';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { QueryBookingDto } from './dto/query-booking.dto';
+import { CouponsService } from '../coupons/coupons.service';
 
 interface BookedItemInput {
   refId: Types.ObjectId;
@@ -33,6 +34,7 @@ export class BookingsService {
     @InjectModel(Service.name) private serviceModel: Model<ServiceDocument>,
     @InjectModel(Package.name) private packageModel: Model<PackageDocument>,
     @InjectModel(Settings.name) private settingsModel: Model<SettingsDocument>,
+    private readonly couponsService: CouponsService,
   ) {}
 
   private generateBookingNumber(): string {
@@ -150,9 +152,28 @@ export class BookingsService {
       bookedServices.reduce((sum, s) => sum + s.price, 0) +
       bookedPackages.reduce((sum, p) => sum + p.price, 0);
 
+    let discountAmount = 0;
+    let appliedCouponCode: string | null = null;
+    let couponDoc: { _id: Types.ObjectId } | undefined;
+    if (dto.couponCode) {
+      const evaluation = await this.couponsService.evaluate(
+        dto.couponCode,
+        subtotal,
+      );
+      if (!evaluation.valid) {
+        throw new BadRequestException(evaluation.message);
+      }
+      discountAmount = evaluation.discountAmount;
+      appliedCouponCode = dto.couponCode.trim().toUpperCase();
+      couponDoc = evaluation.coupon;
+    }
+
     const homeServiceFee =
       dto.serviceType === 'HOME' ? settings.homeServiceFee : 0;
-    const totalAmount = subtotal + homeServiceFee;
+    const totalAmount = Math.max(
+      0,
+      subtotal - discountAmount + homeServiceFee,
+    );
 
     let booking: BookingDocument | undefined;
     let lastError: unknown;
@@ -173,6 +194,8 @@ export class BookingsService {
           timeSlot: dto.timeSlot,
           subtotal,
           homeServiceFee,
+          couponCode: appliedCouponCode,
+          discountAmount,
           totalAmount,
           bookingStatus: BookingStatus.PENDING_WHATSAPP_CONFIRMATION,
           whatsappNumber: settings.whatsappNumber,
@@ -193,6 +216,10 @@ export class BookingsService {
       throw lastError instanceof Error
         ? lastError
         : new BadRequestException('Failed to create booking, please try again');
+    }
+
+    if (couponDoc) {
+      await this.couponsService.incrementUsage(couponDoc._id.toString());
     }
 
     const whatsappMessage = this.buildWhatsappMessage(

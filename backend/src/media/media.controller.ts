@@ -11,8 +11,6 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { MediaService } from './media.service';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
-import { RolesGuard } from '../common/guards/roles.guard';
-import { Roles } from '../common/decorators/roles.decorator';
 
 const DEFAULT_FOLDER = 'madamsaab';
 
@@ -20,8 +18,7 @@ const DEFAULT_FOLDER = 'madamsaab';
 export class MediaController {
   constructor(private readonly mediaService: MediaService) {}
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('ADMIN')
+  @UseGuards(JwtAuthGuard)
   @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {

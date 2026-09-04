@@ -1,6 +1,6 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { User, MapPin, CalendarDays, Star, LogOut } from 'lucide-react';
-import { useAuthStore } from '@/store/authStore';
+import { useCustomerAuthStore } from '@/store/customerAuthStore';
 import { customerAuthApi } from '@/services/customerApi';
 import { cn } from '@/lib/cn';
 
@@ -13,8 +13,8 @@ const TABS = [
 
 export function CustomerDashboardLayout() {
   const navigate = useNavigate();
-  const user = useAuthStore((s) => s.user);
-  const logout = useAuthStore((s) => s.logout);
+  const user = useCustomerAuthStore((s) => s.user);
+  const logout = useCustomerAuthStore((s) => s.logout);
 
   const handleLogout = async () => {
     try {

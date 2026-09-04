@@ -4,8 +4,8 @@ import type { AuthResponse, Profile, UserAddress, Booking, Review } from '@/type
 export const customerAuthApi = {
   register: async (payload: { name: string; email: string; phone: string; password: string }): Promise<AuthResponse> =>
     (await api.post('/auth/register', payload)).data,
-  login: async (email: string, password: string): Promise<AuthResponse> =>
-    (await api.post('/auth/login', { email, password })).data,
+  login: async (identifier: string, password: string): Promise<AuthResponse> =>
+    (await api.post('/auth/login', { identifier, password })).data,
   logout: async (): Promise<void> => {
     await api.post('/auth/logout');
   },
@@ -13,7 +13,13 @@ export const customerAuthApi = {
 
 export const profileApi = {
   get: async (): Promise<Profile> => (await api.get('/users/me')).data,
-  update: async (payload: { name?: string; phone?: string }): Promise<Profile> =>
+  update: async (payload: {
+    name?: string;
+    phone?: string;
+    dateOfBirth?: string;
+    gender?: string;
+    profilePhoto?: string;
+  }): Promise<Profile> =>
     (await api.patch('/users/me', payload)).data,
   addAddress: async (payload: Omit<UserAddress, 'isDefault'> & { isDefault?: boolean }): Promise<Profile> =>
     (await api.post('/users/me/addresses', payload)).data,

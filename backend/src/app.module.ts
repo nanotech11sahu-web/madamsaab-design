@@ -17,6 +17,8 @@ import { AdminModule } from './admin/admin.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { MediaModule } from './media/media.module';
 import { CmsModule } from './cms/cms.module';
+import { CouponsModule } from './coupons/coupons.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -41,6 +43,8 @@ import { CmsModule } from './cms/cms.module';
     ReviewsModule,
     MediaModule,
     CmsModule,
+    CouponsModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [

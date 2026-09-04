@@ -1,9 +1,9 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAuthStore } from '@/store/authStore';
+import { useCustomerAuthStore } from '@/store/customerAuthStore';
 
 export function CustomerProtectedRoute() {
-  const user = useAuthStore((s) => s.user);
-  const accessToken = useAuthStore((s) => s.accessToken);
+  const user = useCustomerAuthStore((s) => s.user);
+  const accessToken = useCustomerAuthStore((s) => s.accessToken);
 
   if (!user || !accessToken) {
     return <Navigate to="/login" replace />;

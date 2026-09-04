@@ -7,6 +7,19 @@ import type {
   CreateBookingResponse,
 } from '@/types';
 
+interface ApplyCouponResponse {
+  valid: boolean;
+  message: string;
+  discountAmount: number;
+}
+
+interface CreatePaymentOrderResponse {
+  orderId: string;
+  amount: number;
+  currency: string;
+  keyId: string;
+}
+
 export const servicesApi = {
   list: async (): Promise<Service[]> => (await api.get('/services')).data,
   bySlug: async (slug: string): Promise<Service> =>
@@ -28,6 +41,22 @@ export const bookingsApi = {
     payload: CreateBookingPayload,
   ): Promise<CreateBookingResponse> =>
     (await api.post('/bookings', payload)).data,
+};
+
+export const couponsApi = {
+  apply: async (code: string, subtotal: number): Promise<ApplyCouponResponse> =>
+    (await api.post('/coupons/apply', { code, subtotal })).data,
+};
+
+export const paymentsApi = {
+  createOrder: async (bookingId: string): Promise<CreatePaymentOrderResponse> =>
+    (await api.post('/payments/order', { bookingId })).data,
+  verify: async (payload: {
+    bookingId: string;
+    razorpayOrderId: string;
+    razorpayPaymentId: string;
+    razorpaySignature: string;
+  }): Promise<{ success: boolean }> => (await api.post('/payments/verify', payload)).data,
 };
 
 export const contactApi = {
