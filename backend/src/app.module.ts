@@ -19,6 +19,7 @@ import { MediaModule } from './media/media.module';
 import { CmsModule } from './cms/cms.module';
 import { CouponsModule } from './coupons/coupons.module';
 import { PaymentsModule } from './payments/payments.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { PaymentsModule } from './payments/payments.module';
     CmsModule,
     CouponsModule,
     PaymentsModule,
+    HealthModule,
   ],
   controllers: [AppController],
   providers: [

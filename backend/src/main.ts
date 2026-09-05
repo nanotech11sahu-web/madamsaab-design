@@ -18,7 +18,9 @@ async function bootstrap() {
     credentials: true,
   });
 
-  app.setGlobalPrefix('api/v1');
+  // Health check stays reachable at plain /health (no /api/v1 prefix) too,
+  // since most hosting/uptime infra (Render, load balancers) probes bare paths.
+  app.setGlobalPrefix('api/v1', { exclude: ['health'] });
 
   app.useGlobalPipes(
     new ValidationPipe({
