@@ -60,7 +60,7 @@ describe('PaymentsService.handleWebhook', () => {
       payload: { payment: { entity: { id: paymentId, order_id: orderId } } },
     });
 
-  it('marks the booking paid on a valid signature', async () => {
+  it('marks the booking paid on a valid signature, without touching bookingStatus', async () => {
     const body = payload('order_abc', 'pay_xyz');
     const signature = signBody(body, WEBHOOK_SECRET);
 
@@ -69,7 +69,9 @@ describe('PaymentsService.handleWebhook', () => {
     expect(result).toEqual({ received: true });
     expect(savedBooking.paymentStatus).toBe('PAID');
     expect(savedBooking.razorpayPaymentId).toBe('pay_xyz');
-    expect(savedBooking.bookingStatus).toBe(BookingStatus.CONFIRMED);
+    // Payment success and salon approval are separate steps — a paid booking
+    // stays pending until admin confirms it.
+    expect(savedBooking.bookingStatus).toBe(BookingStatus.PENDING_WHATSAPP_CONFIRMATION);
     expect(savedBooking.save).toHaveBeenCalledTimes(1);
   });
 

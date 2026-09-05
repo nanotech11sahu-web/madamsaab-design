@@ -25,6 +25,7 @@ function extractErrorMessage(err: unknown): string {
 
 export function Booking() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const {
     serviceMode,
     selectedServices,
@@ -112,9 +113,37 @@ export function Booking() {
 
   const mutation = useMutation({
     mutationFn: bookingsApi.create,
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       setResult(data);
       clear();
+
+      // Save the address used for this home booking to the account, so it's
+      // there next time (in Addresses and prefilled at checkout) — unless an
+      // identical one is already saved.
+      if (variables.serviceType === 'HOME' && variables.address) {
+        const addr = variables.address;
+        const alreadySaved = profile?.addresses.some(
+          (a) =>
+            a.line1.trim().toLowerCase() === addr.line1.trim().toLowerCase() &&
+            a.pincode === addr.pincode,
+        );
+        if (!alreadySaved) {
+          profileApi
+            .addAddress({
+              label: 'Home',
+              line1: addr.line1,
+              line2: addr.line2,
+              city: addr.city,
+              state: addr.state,
+              pincode: addr.pincode,
+              isDefault: (profile?.addresses.length ?? 0) === 0,
+            })
+            .then(() => queryClient.invalidateQueries({ queryKey: ['profile'] }))
+            .catch(() => {
+              // Non-critical — the booking itself already succeeded.
+            });
+        }
+      }
     },
   });
 
