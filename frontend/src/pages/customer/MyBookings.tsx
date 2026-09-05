@@ -59,19 +59,17 @@ export function MyBookings() {
 
         {bookings?.map((b) => (
           <div key={b._id} className="rounded-card border border-brand-border bg-white p-5 shadow-card">
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <p className="font-bold text-brand-navy">{b.bookingNumber}</p>
-                <p className="mt-1 text-xs text-brand-navy/50">
-                  {b.appointmentDate} · {b.timeSlot} · {b.serviceType === 'HOME' ? 'Home Service' : 'Salon Visit'}
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="text-lg font-extrabold text-brand-pink">₹{b.totalAmount}</p>
-                <span className="mt-1 inline-block rounded-full bg-brand-pink-light px-2 py-0.5 text-xs font-medium text-brand-pink">
-                  {bookingStatusLabel(b.bookingStatus)}
-                </span>
-              </div>
+            <div className="flex items-center justify-between gap-3">
+              <p className="font-bold text-brand-navy">{b.bookingNumber}</p>
+              <p className="shrink-0 text-lg font-extrabold text-brand-pink">₹{b.totalAmount}</p>
+            </div>
+            <div className="mt-1 flex flex-wrap items-center justify-between gap-2">
+              <p className="text-xs text-brand-navy/50">
+                {b.appointmentDate} · {b.timeSlot} · {b.serviceType === 'HOME' ? 'Home Service' : 'Salon Visit'}
+              </p>
+              <span className="shrink-0 rounded-full bg-brand-pink-light px-2 py-0.5 text-xs font-medium text-brand-pink">
+                {bookingStatusLabel(b.bookingStatus)}
+              </span>
             </div>
 
             <div className="mt-3 flex flex-wrap gap-2 text-xs text-brand-navy/70">
